@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive ML Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #4caf50;
+            color: white;
+            padding: 1.5rem 0;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        main {
+            background: white;
+            margin-top: 2rem;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select, button {
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            border: none;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #results {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        h2 {
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Interactive Health Predictor</h1>
+    </header>
+    <main>
+        <form id="inputForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter your name" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" required>
+                <option value="">Select your gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" placeholder="Enter your age" required>
+
+            <label for="occupation">Occupation:</label>
+            <select id="occupation" required>
+                <option value="">Select your occupation</option>
+                <option value="manager">Manager</option>
+                <option value="sales representative">Sales Representative</option>
+                <option value="salesperson">Salesperson</option>
+                <option value="nurse">Nurse</option>
+                <option value="teacher">Teacher</option>
+                <option value="scientist">Scientist</option>
+                <option value="software engineer">Software Engineer</option>
+                <option value="accountant">Accountant</option>
+                <option value="lawyer">Lawyer</option>
+                <option value="doctor">Doctor</option>
+                <option value="engineer">Engineer</option>
+            </select>
+
+            <label for="bloodPressure">Blood Pressure:</label>
+            <input type="number" id="bloodPressure" placeholder="Enter blood pressure" required>
+
+            <label for="sleepDuration">Sleep Duration (hours):</label>
+            <input type="number" id="sleepDuration" placeholder="Enter sleep duration" required>
+
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" placeholder="Enter your weight" required>
+
+            <label for="height">Height (cm):</label>
+            <input type="number" id="height" placeholder="Enter your height" required>
+
+            <button type="submit">Predict</button>
+        </form>
+        <div id="results">
+            <h2>Prediction Result:</h2>
+            <p id="predictionOutput">No prediction yet.</p>
+        </div>
+    </main>
+    <script>
+        document.getElementById('inputForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = {
+                name: document.getElementById('name').value,
+                gender: document.getElementById('gender').value,
+                age: Number(document.getElementById('age').value),
+                occupation: document.getElementById('occupation').value,
+                bloodPressure: Number(document.getElementById('bloodPressure').value),
+                sleepDuration: Number(document.getElementById('sleepDuration').value),
+                weight: Number(document.getElementById('weight').value),
+                height: Number(document.getElementById('height').value)
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('predictionOutput').textContent = `Prediction: ${result.prediction}`;
+                } else {
+                    alert("Error generating prediction.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An unexpected error occurred.");
+            }
+        });
+    </script>
+</body>
+</html>
